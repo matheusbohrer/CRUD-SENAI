@@ -1,5 +1,5 @@
 <?php
-require "conexao.php";
+require "bd.php";
 session_start();
 
 // Se já estiver logado, vai direto para a turma
@@ -14,24 +14,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = trim($_POST["email"] ?? "");
     $senha = trim($_POST["senha"] ?? "");
 
-    $stmt = $pdo->prepare("SELECT id_professor, nome_professor, senha_professor 
-                           FROM professor 
-                           WHERE email_professor = ?");
-    $stmt->execute([$email]);
+    $stmt = $conn->prepare("SELECT pk_professor, nome_professor, senha_professor FROM professor WHERE email_professor = ? AND senha_professor = ?");
+    $stmt->bind_param("ss", $email, $senha);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
-    if ($stmt->rowCount() === 1) {
-        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // Verifica senha usando hash
-        if (password_verify($senha, $usuario['senha_professor'])) {
-            $_SESSION["nome_professor"] = $usuario["nome_professor"];
-            $_SESSION["professor_id"] = $usuario["id_professor"];
-            $_SESSION["conectado"] = true;
-            header("Location: turma.php");
-            exit;
-        } else {
-            $erro = "E-mail ou senha inválidos.";
-        }
+    if ($resultado->num_rows === 1) {
+        $dados = $resultado->fetch_assoc();
+        $_SESSION["nome_professor"] = $dados["nome_professor"];
+        $_SESSION["professor_id"] = $dados["pk_professor"];
+        $_SESSION["conectado"] = true;
+        header("Location: turma.php");
+        exit;
     } else {
         $erro = "E-mail ou senha inválidos.";
     }
