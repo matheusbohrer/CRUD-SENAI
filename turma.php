@@ -48,7 +48,10 @@ if (!isset($_SESSION["conectado"]) || $_SESSION["conectado"] != true) {
             </tr>
         </thead>
         <tbody>
+        <?php    
+            include("listar_turmas.php");
             
+        ?>
         </tbody>
     </table>
 </body>
