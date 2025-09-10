@@ -1,26 +1,26 @@
 <?php
-session_start();
+    session_start(); // Inicia a sessão
 
-if (!isset($_SESSION["conectado"]) || $_SESSION["conectado"] != true) {
-    header("Location: login.php");
-    exit;
-}
+    if (!isset($_SESSION["conectado"]) || $_SESSION["conectado"] != true) { // Verifica se está logado
+        header("Location: login.php"); // Redireciona para a página de login
+        exit; // Encerra o script
+    }
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Turmas</title>
 </head>
-
 <body>
-    <h3>Bem-vindo,
+    <h3>
+        Bem-vindo,
         <?php
-        echo $_SESSION["nome_professor"];
-        ?>!
+            echo $_SESSION["nome_professor"];
+        ?>
+
     </h3>
     <a href="sair.php">
         <input type="button" value="sair" event="sair.php">
@@ -42,18 +42,27 @@ if (!isset($_SESSION["conectado"]) || $_SESSION["conectado"] != true) {
     <table>
         <thead>
             <tr>
-                <th>Códigos</th>
+                <th>Código</th>
                 <th>Nome</th>
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody>
-        <?php    
-            include("listar_turmas.php");
-            
-        ?>
+            <?php
+                include("listar_turmas.php");
+
+                if(!empty($lista_turmas)) {
+                    foreach ($lista_turmas as $linha) {
+                        echo ' <tr>
+                         <td>' . $linha['pk_turma'] . ' </td>
+                         <td>' . $linha['nome_turma'] . ' </td>
+                         <td> <a href=excluir_turma.php?codigo="' . $linha['pk_turma'] . '"> <input type="button" value="Excluir"> </a> <td>
+                         <td> <a href="listar_atividades_turma.php?codigo"' . $linha ['pk_turma'] . '"> <input type="button" value="Atividades"> </a> <td>
+                        </tr>';
+                    }
+                }
+            ?>
         </tbody>
     </table>
 </body>
-
 </html>
